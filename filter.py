@@ -31,11 +31,12 @@ def get_war_stats(nation, now):
     
     # Check if the nation has defensive war slots available
     # In Politics & War, each nation has 3 defensive war slots
-    # If num_defensive_wars < 3, they can still be attacked
-    defensive_wars = nation.get("num_defensive_wars", 0)
+    # If defensive_wars field exists, check if it has active defensive wars
+    defensive_wars = nation.get("defensive_wars", [])
     
-    # If the nation has 3 defensive wars, they cannot be attacked
-    has_active_war = (defensive_wars >= 3)
+    # Check how many active defensive wars the nation has
+    # If they have 3 defensive wars, they cannot be attacked
+    has_active_war = (len(defensive_wars) >= 3)
     
     # Get time since most recent war
     last_war = wars[0]  # First war is the most recent

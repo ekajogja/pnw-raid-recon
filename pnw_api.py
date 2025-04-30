@@ -153,7 +153,11 @@ def get_nations(page=1):
             def_id
           }}
           war_policy
-          num_defensive_wars
+          defensive_wars {{
+            id
+            turnsleft
+            def_id
+          }}
         }}
         paginatorInfo {{
           hasMorePages
