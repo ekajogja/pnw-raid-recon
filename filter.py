@@ -8,27 +8,18 @@ def total_infra(cities):
 
 def calculate_money_lost(wars, nation_id):
     """Calculate total money lost as a defender in wars."""
-    total_lost = 0
-    for war in wars:
-        if str(war["defid"]) == str(nation_id):  # Nation was defender
-            total_lost += war.get("att_money_looted", 0)  # Money taken by attacker
-    return total_lost
+    # With simplified war data, we don't track money lost anymore
+    return 0
 
 def has_significant_loss(nation):
     """Check if a nation has significant loss history as defender."""
-    wars = nation.get("wars", [])
-    total_lost = 0
-    
-    for war in wars:
-        # Only count wars where this nation was defender and lost
-        if str(war["defid"]) == str(nation["id"]) and str(war["winner"]) == str(war["attid"]):
-            total_lost += war.get("att_money_looted", 0)  # Money taken by attacker
-            
-    return total_lost > 1000000  # More than 1M money
+    # With simplified war data, we don't track loss history
+    return False
 
 def count_wars_lost(wars, nation_id):
     """Count number of wars where nation was defender and lost."""
-    return sum(1 for war in wars if str(war["defid"]) == str(nation_id) and str(war["winner"]) == str(war["attid"]))
+    # With simplified war data, we don't track war history details
+    return 0
 
 def get_war_stats(nation, now):
     """Get stats about wars and check if there are any active wars."""
@@ -36,21 +27,22 @@ def get_war_stats(nation, now):
     if not wars:
         return False, None, 0
     
-    # Calculate total money lost as defender across all wars
-    money_lost = 0
-    for war in wars:
-        if str(war["defid"]) == str(nation["id"]):  # Nation was defender
-            money_lost += war.get("att_money_looted", 0) or 0
+    # Just follow the simplified approach: Only check if the most recent war has turnsleft > 0
+    # Per user: "for the nation war, just query turnsleft and date, then make 
+    # sure the latest date has turnsleft 0"
     
-    # Check for any active wars (either as attacker or defender)
-    has_active_war = any(war["turnsleft"] > 0 for war in wars)
+    # Get the most recent war (first in the list)
+    last_war = wars[0]  # First war is the most recent
+    
+    # Check if the most recent war is active (turnsleft > 0)
+    has_active_war = int(last_war.get("turnsleft", 0)) > 0
     
     # Get time since most recent war
-    last_war = wars[0]  # First war is the most recent
     war_date = datetime.strptime(last_war["date"], "%Y-%m-%dT%H:%M:%S%z")
     hours_since_war = (now - war_date.replace(tzinfo=None)).total_seconds() / 3600
     
-    return has_active_war, hours_since_war, money_lost
+    # We're no longer tracking money lost with the simplified API data
+    return has_active_war, hours_since_war, 0
 
 def calculate_loot_value(loot):
     """Calculate loot value (just money now)."""
@@ -60,15 +52,13 @@ def calculate_loot_value(loot):
 
 def count_active_wars(wars, nation_id):
     """Count number of active wars where nation is attacker or defender."""
-    attacking = 0
-    defending = 0
+    # With simplified data structure, we only check turnsleft > 0
+    # We don't have attid/defid anymore
+    active_count = 0
     for war in wars:
-        if war["turnsleft"] > 0:  # Active war
-            if str(war["attid"]) == str(nation_id):
-                attacking += 1
-            elif str(war["defid"]) == str(nation_id):
-                defending += 1
-    return attacking, defending
+        if int(war.get("turnsleft", 0)) > 0:  # Active war
+            active_count += 1
+    return active_count, 0  # Return count of active wars, 0 for defending
 
 def filter_targets(nations, my_nation, min_infra=1500, max_infra=20000, 
                   min_inactive_days=2, ignore_alliance=False, max_soldier_ratio=MAX_SOLDIER_RATIO,

@@ -148,11 +148,7 @@ def get_nations(page=1):
             infrastructure
           }}
           wars {{
-            attid
-            defid
             turnsleft
-            winner
-            att_money_looted
             date
           }}
         }}
