@@ -172,25 +172,20 @@ def main():
         
         # Print summary first
         total_infra = sum(t['infra'] for t in filtered)
-        total_money_lost = sum(t.get('money_lost', 0) for t in filtered)
-        nations_with_losses = sum(1 for t in filtered if t.get('money_lost', 0) > 0)
         
         print("\n📊 Summary:")
         print(f"  Found {len(filtered)} potential raid targets")
         print(f"  Total target infrastructure: {total_infra:,.2f}")
         print(f"  Average infra per target: {total_infra/len(filtered):,.2f}" if filtered else "  No targets found")
-        print(f"  Nations with previous losses: {nations_with_losses}/{len(filtered)}")
-        print(f"  Total money lost across targets: {format_money(total_money_lost)}")
         
         # Print detailed target information
-        print(f"\n🎯 Top {len(filtered)} Raid Targets (sorted by money lost):")
+        print(f"\n🎯 Top {len(filtered)} Raid Targets (sorted by infrastructure):")
         for i, t in enumerate(filtered, 1):
             nation_url = f"https://politicsandwar.com/nation/id={t['id']}"
             print(f"{i}. {t['name']} (ID: {t['id']}) | {t['alliance']}")
             print(f"  Score: {t['score']:,.2f} | Infra: {t['infra']:,.2f} | Cities: {t.get('city_count', '?')}")
             print(f"  Intel: {t['spies']} spies | Troops: {t['soldiers']:,}/{t['max_soldiers']:,}")
             print(f"  Inactive: {t['inactive_days']}d | Last war: {format_hours(t.get('hours_since_war'))} ago")
-            print(f"  Money lost in wars: {format_money(t.get('money_lost', 0))}")
             print(f"  URL: {nation_url}")
             print(f"  Attack: https://politicsandwar.com/nation/war/declare/id={t['id']}")
             print()

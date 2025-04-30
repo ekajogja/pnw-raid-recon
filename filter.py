@@ -159,11 +159,10 @@ def filter_targets(nations, my_nation, min_infra=1500, max_infra=20000,
                 "max_soldiers": max_soldiers,
                 "alliance": alliance_name,
                 "hours_since_war": hours_since_war,
-                "money_lost": money_lost,
                 "city_count": len(n["cities"])
             })
         except Exception as e:
             continue
 
-    # Sort by money lost in last war (higher is better) and infrastructure (higher is better)
-    return sorted(results, key=lambda x: (x["money_lost"], x["infra"]), reverse=True)
+    # Sort by infrastructure (higher is better)
+    return sorted(results, key=lambda x: x["infra"], reverse=True)
