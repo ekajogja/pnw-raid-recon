@@ -49,6 +49,34 @@ def scan():
             flash(f"Error getting targets: {str(e)}", "error")
             return redirect(url_for('index'))
         
+        # Calculate summary statistics
+        total_infra = sum(t['infra'] for t in targets) if targets else 0
+        total_money_lost = sum(t.get('money_lost', 0) for t in targets) if targets else 0
+        nations_with_losses = sum(1 for t in targets if t.get('money_lost', 0) > 0) if targets else 0
+        
+        # Print summary and results to console for command-line viewing
+        print("\n📊 Summary:")
+        print(f"  Found {len(targets)} potential raid targets")
+        print(f"  Total target infrastructure: {total_infra:,.2f}")
+        if targets:
+            print(f"  Average infra per target: {total_infra/len(targets):,.2f}")
+        else:
+            print("  No targets found")
+        print(f"  Nations with previous losses: {nations_with_losses}/{len(targets) if targets else 0}")
+        print(f"  Total money lost across targets: {format_money(total_money_lost)}")
+        
+        print(f"\n🎯 Top {len(targets)} Raid Targets (sorted by money lost):")
+        for i, t in enumerate(targets, 1):
+            nation_url = f"https://politicsandwar.com/nation/id={t['id']}"
+            print(f"{i}. {t['name']} (ID: {t['id']}) | {t['alliance']}")
+            print(f"  Score: {t['score']:,.2f} | Infra: {t['infra']:,.2f} | Cities: {t.get('city_count', '?')}")
+            print(f"  Intel: {t['spies']} spies | Troops: {t['soldiers']:,}/{t['max_soldiers']:,}")
+            print(f"  Inactive: {t['inactive_days']}d | Last war: {format_hours(t.get('hours_since_war'))} ago")
+            print(f"  Money lost in wars: {format_money(t.get('money_lost', 0))}")
+            print(f"  URL: {nation_url}")
+            print(f"  Attack: https://politicsandwar.com/nation/war/declare/id={t['id']}")
+            print()
+        
         # Prepare data for template
         data = {
             'my_nation': my_nation,
@@ -88,16 +116,37 @@ def api_scan():
         # Parse the request JSON
         req_data = request.get_json() or {}
         
-        # Set default values
-        args.min_infra = int(req_data.get('min_infra', 2500))
-        args.max_infra = int(req_data.get('max_infra', 20000))
-        args.inactive_time = float(req_data.get('inactive_time', 1.5))
-        args.ignore_dnr = req_data.get('ignore_dnr', False)
-        args.troop_ratio = float(req_data.get('troop_ratio', 0.1))
-        args.limit = int(req_data.get('limit', 10))
+        try:
+            # Set default values
+            args.min_infra = int(req_data.get('min_infra', 2500))
+            args.max_infra = int(req_data.get('max_infra', 20000))
+            args.inactive_time = float(req_data.get('inactive_time', 1.5))
+            args.ignore_dnr = req_data.get('ignore_dnr', False)
+            args.troop_ratio = float(req_data.get('troop_ratio', 0.1))
+            args.limit = int(req_data.get('limit', 10))
+        except (ValueError, TypeError) as e:
+            return jsonify({'error': f'Invalid parameter: {str(e)}'}), 400
         
-        # Get raid targets
-        my_nation, targets = get_raid_targets(args)
+        try:
+            # Get raid targets
+            my_nation, targets = get_raid_targets(args)
+            
+            # Print results to console for command-line viewing
+            print(f"\n🎯 Top {len(targets)} Raid Targets from API (sorted by money lost):")
+            for t in targets:
+                nation_url = f"https://politicsandwar.com/nation/id={t['id']}"
+                print(f"- {t['name']} (ID: {t['id']}) | {t['alliance']}")
+                print(f"  Score: {t['score']:,.2f} | Infra: {t['infra']:,.2f}")
+                print(f"  Intel: {t['spies']} spies | Troops: {t['soldiers']:,}/{t['max_soldiers']:,}")
+                print(f"  Inactive: {t['inactive_days']}d | Last war: {format_hours(t.get('hours_since_war'))} ago")
+                print(f"  Money lost in wars: {format_money(t.get('money_lost', 0))}")
+                print(f"  URL: {nation_url}")
+                print()
+        except Exception as e:
+            import traceback
+            error_details = traceback.format_exc()
+            print(f"Error in API get_raid_targets: {str(e)}\n{error_details}")
+            return jsonify({'error': str(e)}), 500
         
         return jsonify({
             'my_nation': my_nation,
@@ -113,6 +162,9 @@ def api_scan():
         })
     
     except Exception as e:
+        import traceback
+        error_details = traceback.format_exc()
+        print(f"Unhandled error in API scan route: {str(e)}\n{error_details}")
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':

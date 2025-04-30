@@ -78,11 +78,55 @@
             </div>
         </div>
 
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card shadow">
+                    <div class="card-header bg-dark text-white">
+                        <h3>Results Summary</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="alert alert-info">
+                                    <h5>Target Overview</h5>
+                                    <ul class="list-group mt-2">
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            Total targets found
+                                            <span class="badge bg-primary rounded-pill">{{ data.targets|length }}</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            Nations with previous losses
+                                            <span class="badge bg-success rounded-pill">{{ data.targets|selectattr('money_lost', 'defined')|selectattr('money_lost', '>', 0)|list|length }} / {{ data.targets|length }}</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="alert alert-success">
+                                    <h5>Infrastructure & Loot</h5>
+                                    <ul class="list-group mt-2">
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            Total infrastructure
+                                            <span class="badge bg-primary rounded-pill">{{ data.targets|sum(attribute='infra')|format(',') }}</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            Total previous losses
+                                            <span class="badge bg-danger rounded-pill">{{ format_money(data.targets|sum(attribute='money_lost')) }}</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-md-12">
                 <div class="card shadow">
                     <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-                        <h3>Raid Targets</h3>
+                        <h3>Raid Targets ({{ data.targets|length }})</h3>
                         <a href="{{ url_for('index') }}" class="btn btn-outline-light btn-sm">
                             <i data-feather="refresh-cw"></i> New Search
                         </a>
@@ -92,6 +136,7 @@
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
+                                        <th>#</th>
                                         <th>Nation</th>
                                         <th>Score</th>
                                         <th>Infra</th>
@@ -104,7 +149,8 @@
                                 </thead>
                                 <tbody>
                                     {% for target in data.targets %}
-                                    <tr>
+                                    <tr{% if target.money_lost > 1000000 %} class="table-success"{% endif %}>
+                                        <td>{{ loop.index }}</td>
                                         <td>
                                             <strong>{{ target.name }}</strong><br>
                                             <small class="text-muted">ID: {{ target.id }}</small><br>
