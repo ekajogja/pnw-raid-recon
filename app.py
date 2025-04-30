@@ -194,7 +194,8 @@ def api_scan():
                 'inactive_time': args.inactive_time,
                 'ignore_dnr': args.ignore_dnr,
                 'troop_ratio': args.troop_ratio,
-                'limit': args.limit
+                'limit': args.limit,
+                'max_pages': args.max_pages
             }
         })
     
