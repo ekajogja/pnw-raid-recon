@@ -38,6 +38,7 @@ def scan():
             args.ignore_dnr = request.form.get('ignore_dnr') == 'true'
             args.troop_ratio = float(request.form.get('troop_ratio', 0.1))
             args.limit = int(request.form.get('limit', 10))
+            args.max_pages = int(request.form.get('max_pages', 5))
         except (ValueError, TypeError) as e:
             flash(f"Invalid form data: {str(e)}", "error")
             return redirect(url_for('index'))
@@ -103,7 +104,8 @@ def scan():
                 'inactive_time': args.inactive_time,
                 'ignore_dnr': args.ignore_dnr,
                 'troop_ratio': args.troop_ratio,
-                'limit': args.limit
+                'limit': args.limit,
+                'max_pages': args.max_pages
             }
         }
         
@@ -140,6 +142,7 @@ def api_scan():
             args.ignore_dnr = req_data.get('ignore_dnr', False)
             args.troop_ratio = float(req_data.get('troop_ratio', 0.1))
             args.limit = int(req_data.get('limit', 10))
+            args.max_pages = int(req_data.get('max_pages', 5))
         except (ValueError, TypeError) as e:
             return jsonify({'error': f'Invalid parameter: {str(e)}'}), 400
         
@@ -158,7 +161,7 @@ def api_scan():
                 print(f"  Score: {t['score']:,.2f} | Infra: {t['infra']:,.2f} | Cities: {t.get('city_count', '?')}")
                 print(f"  Intel: {t['spies']} spies | Troops: {t['soldiers']:,}/{t['max_soldiers']:,}")
                 print(f"  Inactive: {t['inactive_days']}d | Last war: {format_hours(t.get('hours_since_war'))} ago")
-                print(f"  War Status: ✅ Defensive slots available")
+                print(f"  War Status: ✅ No active defensive wars")
                 print(f"  URL: {nation_url}")
                 print(f"  Attack: https://politicsandwar.com/nation/war/declare/id={t['id']}")
                 print()
