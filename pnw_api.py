@@ -147,13 +147,13 @@ def get_nations(page=1):
           cities {{
             infrastructure
           }}
-          wars(limit: 1) {{
-            date
-            turnsleft
+          wars {{
             attid
             defid
-            att_money_looted
+            turnsleft
             winner
+            att_money_looted
+            date
           }}
         }}
         paginatorInfo {{

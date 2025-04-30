@@ -4,6 +4,7 @@ from tqdm import tqdm
 import traceback
 import argparse
 import os
+import time
 from datetime import datetime
 from config import MIN_INFRA, MAX_INFRA, MIN_INACTIVE_DAYS, IGNORE_DNR, MAX_PAGES, MIN_SCORE_RATIO, MAX_SCORE_RATIO, MAX_SOLDIER_RATIO
 
@@ -132,7 +133,26 @@ def get_raid_targets(args):
         except Exception as e:
             print(f"\n❌ Error fetching page {page}: {str(e)}")
             traceback.print_exc()
-            continue
+            
+            # If we already have some nations, just use what we have
+            if all_nations:
+                print(f"\n✅ Using {len(all_nations)} nations already fetched before error")
+                break
+            else:
+                # No nations fetched yet, try one more time with a delay
+                try:
+                    print("Retrying with a 5-second delay...")
+                    time.sleep(5)
+                    nations_data = get_nations(page)
+                    all_nations.extend(nations_data["data"])
+                    pbar.update(1)
+                    page += 1
+                except Exception as retry_e:
+                    print(f"\n❌ Retry also failed: {str(retry_e)}")
+                    # Terminate with an error if we can't fetch any data
+                    if not all_nations:
+                        raise ValueError("Could not fetch any nation data from API after retries")
+                    break
 
     pbar.close()
     
