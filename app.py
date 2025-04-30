@@ -166,6 +166,7 @@ def api_scan():
                 print(f"  Intel: {t['spies']} spies | Troops: {t['soldiers']:,}/{t['max_soldiers']:,}")
                 print(f"  Inactive: {t['inactive_days']}d | Last war: {format_hours(t.get('hours_since_war'))} ago")
                 print(f"  Money lost in wars: {format_money(t.get('money_lost', 0))}")
+                print(f"  War Status: ✅ No active wars")
                 print(f"  URL: {nation_url}")
                 print(f"  Attack: https://politicsandwar.com/nation/war/declare/id={t['id']}")
                 print()

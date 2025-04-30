@@ -31,24 +31,24 @@ def count_wars_lost(wars, nation_id):
     return sum(1 for war in wars if str(war["defid"]) == str(nation_id) and str(war["winner"]) == str(war["attid"]))
 
 def get_war_stats(nation, now):
-    """Get stats about the last war."""
+    """Get stats about wars and check if there are any active wars."""
     wars = nation.get("wars", [])
     if not wars:
         return False, None, 0
-        
-    last_war = wars[0]  # Only one war due to limit:1 in query
     
-    # Check if nation has active war
-    has_active_war = last_war["turnsleft"] > 0
+    # Calculate total money lost as defender across all wars
+    money_lost = 0
+    for war in wars:
+        if str(war["defid"]) == str(nation["id"]):  # Nation was defender
+            money_lost += war.get("att_money_looted", 0) or 0
     
-    # Get war timing
+    # Check for any active wars (either as attacker or defender)
+    has_active_war = any(war["turnsleft"] > 0 for war in wars)
+    
+    # Get time since most recent war
+    last_war = wars[0]  # First war is the most recent
     war_date = datetime.strptime(last_war["date"], "%Y-%m-%dT%H:%M:%S%z")
     hours_since_war = (now - war_date.replace(tzinfo=None)).total_seconds() / 3600
-    
-    # Calculate money lost as defender in last war
-    money_lost = 0
-    if str(last_war["defid"]) == str(nation["id"]):  # Nation was defender
-        money_lost = last_war.get("att_money_looted", 0)
     
     return has_active_war, hours_since_war, money_lost
 

@@ -147,13 +147,14 @@ def get_nations(page=1):
           cities {{
             infrastructure
           }}
-          wars(limit: 3) {{
+          wars(limit: 10) {{
             date
             turnsleft
             attid
             defid
             att_money_looted
             winner
+            status
           }}
         }}
         paginatorInfo {{

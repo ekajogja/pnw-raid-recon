@@ -142,7 +142,7 @@
                                         <th>Infra</th>
                                         <th>Inactive</th>
                                         <th>Military</th>
-                                        <th>Last War</th>
+                                        <th>War Status</th>
                                         <th>Money Lost</th>
                                         <th>Actions</th>
                                     </tr>
@@ -163,7 +163,10 @@
                                             <span data-bs-toggle="tooltip" title="Soldiers">👥 {{ '{:,}'.format(target.soldiers) }}</span><br>
                                             <span data-bs-toggle="tooltip" title="Spies">🕵️ {{ target.spies }}</span>
                                         </td>
-                                        <td>{{ format_hours(target.hours_since_war) }} ago</td>
+                                        <td>
+                                            {{ format_hours(target.hours_since_war) }} ago<br>
+                                            <span class="badge bg-success">No active wars</span>
+                                        </td>
                                         <td>{{ format_money(target.money_lost) }}</td>
                                         <td>
                                             <a href="https://politicsandwar.com/nation/id={{ target.id }}" target="_blank" class="btn btn-primary btn-sm mb-1">
