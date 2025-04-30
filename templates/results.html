@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PnW Raid Scanner - Results</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="py-3 text-center">
+            <h1 class="display-4">🏴‍☠️ Politics & War Raid Scanner</h1>
+            <p class="lead">Found {{ data.targets|length }} potential raid targets</p>
+        </header>
+
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card shadow">
+                    <div class="card-header bg-dark text-white">
+                        <h3>Your Nation Summary</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h5>Nation Stats</h5>
+                                <ul class="list-group">
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Score
+                                        <span class="badge bg-primary rounded-pill">{{ data.my_nation.score|float|round(2) }}</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Soldiers
+                                        <span class="badge bg-success rounded-pill">{{ data.my_nation.soldiers|int|format(',d') }}</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Spies
+                                        <span class="badge bg-info rounded-pill">{{ data.my_nation.spies|int|format(',d') }}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-4">
+                                <h5>Alliance</h5>
+                                {% if data.my_nation.alliance %}
+                                <div class="alert alert-info">
+                                    <strong>{{ data.my_nation.alliance.name }}</strong>
+                                    <p class="mb-0">You are in an alliance with treaties</p>
+                                </div>
+                                {% else %}
+                                <div class="alert alert-warning">
+                                    <strong>No Alliance</strong>
+                                    <p class="mb-0">You are not in an alliance</p>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4">
+                                <h5>Search Parameters</h5>
+                                <ul class="list-group">
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Infra Range
+                                        <span class="badge bg-secondary rounded-pill">{{ data.params.min_infra|format(',d') }} - {{ data.params.max_infra|format(',d') }}</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Inactive Time
+                                        <span class="badge bg-secondary rounded-pill">{{ data.params.inactive_time }}d</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Troop Ratio
+                                        <span class="badge bg-secondary rounded-pill">{{ (data.params.troop_ratio * 100)|int }}%</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card shadow">
+                    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                        <h3>Raid Targets</h3>
+                        <a href="{{ url_for('index') }}" class="btn btn-outline-light btn-sm">
+                            <i data-feather="refresh-cw"></i> New Search
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Nation</th>
+                                        <th>Score</th>
+                                        <th>Infra</th>
+                                        <th>Inactive</th>
+                                        <th>Military</th>
+                                        <th>Last War</th>
+                                        <th>Money Lost</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for target in data.targets %}
+                                    <tr>
+                                        <td>
+                                            <strong>{{ target.name }}</strong><br>
+                                            <small class="text-muted">ID: {{ target.id }}</small><br>
+                                            <small class="badge {{ 'bg-secondary' if target.alliance == 'No Alliance' else 'bg-info' }}">{{ target.alliance }}</small>
+                                        </td>
+                                        <td>{{ target.score|round(2) }}</td>
+                                        <td>{{ target.infra|format(',d') }}</td>
+                                        <td>{{ target.inactive_days }}d</td>
+                                        <td>
+                                            <span data-bs-toggle="tooltip" title="Soldiers">👥 {{ target.soldiers|format(',d') }}</span><br>
+                                            <span data-bs-toggle="tooltip" title="Spies">🕵️ {{ target.spies }}</span>
+                                        </td>
+                                        <td>{{ data.format_hours(target.hours_since_war) }} ago</td>
+                                        <td>{{ data.format_money(target.money_lost) }}</td>
+                                        <td>
+                                            <a href="https://politicsandwar.com/nation/id={{ target.id }}" target="_blank" class="btn btn-primary btn-sm mb-1">
+                                                <i data-feather="external-link"></i> View
+                                            </a>
+                                            <a href="https://politicsandwar.com/nation/war/declare/id={{ target.id }}" target="_blank" class="btn btn-danger btn-sm">
+                                                <i data-feather="target"></i> Attack
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-header bg-dark text-white">
+                        <h3>Target Infrastructure Distribution</h3>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="infraChart" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-header bg-dark text-white">
+                        <h3>Target Money Loss Distribution</h3>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="moneyChart" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="mt-5 text-center text-muted">
+            <p>Politics &amp; War Raid Scanner</p>
+            <p>For optimal raiding results and to avoid counters, respect DNR lists and alliance treaties</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            feather.replace();
+            
+            // Initialize tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
+            
+            // Infrastructure chart
+            var infraCtx = document.getElementById('infraChart').getContext('2d');
+            var infraChart = new Chart(infraCtx, {
+                type: 'bar',
+                data: {
+                    labels: [{% for target in data.targets %}'{{ target.name }}'{% if not loop.last %}, {% endif %}{% endfor %}],
+                    datasets: [{
+                        label: 'Infrastructure',
+                        data: [{% for target in data.targets %}{{ target.infra }}{% if not loop.last %}, {% endif %}{% endfor %}],
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Infrastructure'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Money loss chart
+            var moneyCtx = document.getElementById('moneyChart').getContext('2d');
+            var moneyChart = new Chart(moneyCtx, {
+                type: 'bar',
+                data: {
+                    labels: [{% for target in data.targets %}'{{ target.name }}'{% if not loop.last %}, {% endif %}{% endfor %}],
+                    datasets: [{
+                        label: 'Money Lost in Wars',
+                        data: [{% for target in data.targets %}{{ target.money_lost }}{% if not loop.last %}, {% endif %}{% endfor %}],
+                        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Money Lost ($)'
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

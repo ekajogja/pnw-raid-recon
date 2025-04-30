@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PnW Raid Scanner</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="py-3 text-center">
+            <h1 class="display-4">🏴‍☠️ Politics & War Raid Scanner</h1>
+            <p class="lead">Find optimal loot targets based on your nation's capabilities</p>
+        </header>
+
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow">
+                    <div class="card-header bg-dark text-white">
+                        <h3>Raid Target Parameters</h3>
+                    </div>
+                    <div class="card-body">
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                {% for category, message in messages %}
+                                    <div class="alert alert-{{ category == 'error' and 'danger' or category }}">
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+
+                        <form action="{{ url_for('scan') }}" method="post">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="min_infra" class="form-label">Minimum Infrastructure</label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="min_infra" name="min_infra" value="2500" min="0">
+                                        <span class="input-group-text"><i data-feather="bar-chart-2"></i></span>
+                                    </div>
+                                    <small class="text-muted">Minimum total infra to consider target worth raiding</small>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="max_infra" class="form-label">Maximum Infrastructure</label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="max_infra" name="max_infra" value="20000" min="0">
+                                        <span class="input-group-text"><i data-feather="bar-chart"></i></span>
+                                    </div>
+                                    <small class="text-muted">Maximum total infra (higher might be too defended)</small>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="inactive_time" class="form-label">Minimum Inactive Time (days)</label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="inactive_time" name="inactive_time" value="1.5" min="0" step="0.1">
+                                        <span class="input-group-text"><i data-feather="clock"></i></span>
+                                    </div>
+                                    <small class="text-muted">Minimum time inactive to avoid counters (1.5 = 36 hours)</small>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="troop_ratio" class="form-label">Maximum Troop Ratio</label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="troop_ratio" name="troop_ratio" value="0.1" min="0" max="1" step="0.05">
+                                        <span class="input-group-text"><i data-feather="users"></i></span>
+                                    </div>
+                                    <small class="text-muted">Max enemy/friendly troop ratio (0.1 = 10% of your troops)</small>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="ignore_dnr" name="ignore_dnr" value="true">
+                                        <label class="form-check-label" for="ignore_dnr">Include Allied Nations (Ignore DNR)</label>
+                                    </div>
+                                    <small class="text-muted">Show nations in alliances but still respect treaties</small>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="limit" class="form-label">Result Limit</label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="limit" name="limit" value="10" min="1" max="50">
+                                        <span class="input-group-text"><i data-feather="list"></i></span>
+                                    </div>
+                                    <small class="text-muted">Maximum number of targets to return</small>
+                                </div>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary" id="scan-btn">
+                                    <i data-feather="search"></i> Scan for Targets
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="card-footer text-muted">
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <small>This tool helps find inactive nations for raiding. Always respect alliance treaties and game rules.</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="mt-5 text-center text-muted">
+            <p>Politics &amp; War Raid Scanner</p>
+            <p>For optimal raiding results and to avoid counters, respect DNR lists and alliance treaties</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            feather.replace();
+        });
+    </script>
+</body>
+</html>

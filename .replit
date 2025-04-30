@@ -1,0 +1,32 @@
+modules = ["python-3.11"]
+
+[nix]
+channel = "stable-24_05"
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "PnW Raid Scanner"
+
+[[workflows.workflow]]
+name = "PnW Raid Scanner"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "pip install -r attached_assets/requirements.txt flask python-dotenv && python app.py"
+waitForPort = 5000
+
+[deployment]
+run = ["sh", "-c", "pip install -r attached_assets/requirements.txt flask python-dotenv && python app.py"]
+
+[[ports]]
+localPort = 5000
+externalPort = 80
