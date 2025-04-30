@@ -33,11 +33,11 @@
                                     </li>
                                     <li class="list-group-item d-flex justify-content-between align-items-center">
                                         Soldiers
-                                        <span class="badge bg-success rounded-pill">{{ data.my_nation.soldiers|int|format(',d') }}</span>
+                                        <span class="badge bg-success rounded-pill">{{ '{:,}'.format(data.my_nation.soldiers|int) }}</span>
                                     </li>
                                     <li class="list-group-item d-flex justify-content-between align-items-center">
                                         Spies
-                                        <span class="badge bg-info rounded-pill">{{ data.my_nation.spies|int|format(',d') }}</span>
+                                        <span class="badge bg-info rounded-pill">{{ '{:,}'.format(data.my_nation.spies|int) }}</span>
                                     </li>
                                 </ul>
                             </div>
@@ -60,7 +60,7 @@
                                 <ul class="list-group">
                                     <li class="list-group-item d-flex justify-content-between align-items-center">
                                         Infra Range
-                                        <span class="badge bg-secondary rounded-pill">{{ data.params.min_infra|format(',d') }} - {{ data.params.max_infra|format(',d') }}</span>
+                                        <span class="badge bg-secondary rounded-pill">{{ '{:,}'.format(data.params.min_infra) }} - {{ '{:,}'.format(data.params.max_infra) }}</span>
                                     </li>
                                     <li class="list-group-item d-flex justify-content-between align-items-center">
                                         Inactive Time
@@ -107,7 +107,7 @@
                                     <ul class="list-group mt-2">
                                         <li class="list-group-item d-flex justify-content-between align-items-center">
                                             Total infrastructure
-                                            <span class="badge bg-primary rounded-pill">{{ data.targets|sum(attribute='infra')|format(',') }}</span>
+                                            <span class="badge bg-primary rounded-pill">{{ '{:,.2f}'.format(data.targets|sum(attribute='infra')) }}</span>
                                         </li>
                                         <li class="list-group-item d-flex justify-content-between align-items-center">
                                             Total previous losses
@@ -157,10 +157,10 @@
                                             <small class="badge {{ 'bg-secondary' if target.alliance == 'No Alliance' else 'bg-info' }}">{{ target.alliance }}</small>
                                         </td>
                                         <td>{{ target.score|round(2) }}</td>
-                                        <td>{{ target.infra|format(',d') }}</td>
+                                        <td>{{ '{:,.2f}'.format(target.infra) }}</td>
                                         <td>{{ target.inactive_days }}d</td>
                                         <td>
-                                            <span data-bs-toggle="tooltip" title="Soldiers">👥 {{ target.soldiers|format(',d') }}</span><br>
+                                            <span data-bs-toggle="tooltip" title="Soldiers">👥 {{ '{:,}'.format(target.soldiers) }}</span><br>
                                             <span data-bs-toggle="tooltip" title="Spies">🕵️ {{ target.spies }}</span>
                                         </td>
                                         <td>{{ format_hours(target.hours_since_war) }} ago</td>
