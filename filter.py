@@ -45,9 +45,9 @@ def get_war_stats(nation, now):
         if def_war_count > 0:
             print(f"  Active defensive wars: {active_defensive_wars}")
     
-    # Check how many active defensive wars the nation has
-    # If they have 3 or more active defensive wars, they cannot be attacked
-    has_active_war = (def_war_count >= 3)
+    # Check if nation has any active defensive wars
+    # We want nations with zero active defensive wars
+    has_active_war = (def_war_count > 0)
     
     # Get time since most recent war
     last_war = wars[0]  # First war is the most recent
@@ -125,7 +125,7 @@ def filter_targets(nations, my_nation, min_infra=1500, max_infra=20000,
             
             # Skip if nation has active war
             if has_active_war:
-                #print(f"Skipping {nation_name}: has active wars (no def slots)")
+                #print(f"Skipping {nation_name}: has active defensive wars")
                 continue
                 
             # Skip if last war was too recent (less than 24h ago)
