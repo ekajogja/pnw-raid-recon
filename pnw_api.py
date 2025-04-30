@@ -150,10 +150,10 @@ def get_nations(page=1):
           wars {{
             turnsleft
             date
-            defender_id
+            def_id
           }}
           war_policy
-          defensive_wars
+          num_defensive_wars
         }}
         paginatorInfo {{
           hasMorePages

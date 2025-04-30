@@ -31,8 +31,8 @@ def get_war_stats(nation, now):
     
     # Check if the nation has defensive war slots available
     # In Politics & War, each nation has 3 defensive war slots
-    # If defensive_wars < 3, they can still be attacked
-    defensive_wars = nation.get("defensive_wars", 0)
+    # If num_defensive_wars < 3, they can still be attacked
+    defensive_wars = nation.get("num_defensive_wars", 0)
     
     # If the nation has 3 defensive wars, they cannot be attacked
     has_active_war = (defensive_wars >= 3)
