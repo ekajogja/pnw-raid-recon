@@ -117,8 +117,8 @@
                                             <span data-bs-toggle="tooltip" title="Soldiers">👥 {{ target.soldiers|format(',d') }}</span><br>
                                             <span data-bs-toggle="tooltip" title="Spies">🕵️ {{ target.spies }}</span>
                                         </td>
-                                        <td>{{ data.format_hours(target.hours_since_war) }} ago</td>
-                                        <td>{{ data.format_money(target.money_lost) }}</td>
+                                        <td>{{ format_hours(target.hours_since_war) }} ago</td>
+                                        <td>{{ format_money(target.money_lost) }}</td>
                                         <td>
                                             <a href="https://politicsandwar.com/nation/id={{ target.id }}" target="_blank" class="btn btn-primary btn-sm mb-1">
                                                 <i data-feather="external-link"></i> View

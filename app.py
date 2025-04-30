@@ -27,21 +27,32 @@ def scan():
         
         args = Args()
         
-        # Set default values
-        args.min_infra = int(request.form.get('min_infra', 2500))
-        args.max_infra = int(request.form.get('max_infra', 20000))
-        args.inactive_time = float(request.form.get('inactive_time', 1.5))
-        args.ignore_dnr = request.form.get('ignore_dnr') == 'true'
-        args.troop_ratio = float(request.form.get('troop_ratio', 0.1))
-        args.limit = int(request.form.get('limit', 10))
+        try:
+            # Set default values
+            args.min_infra = int(request.form.get('min_infra', 2500))
+            args.max_infra = int(request.form.get('max_infra', 20000))
+            args.inactive_time = float(request.form.get('inactive_time', 1.5))
+            args.ignore_dnr = request.form.get('ignore_dnr') == 'true'
+            args.troop_ratio = float(request.form.get('troop_ratio', 0.1))
+            args.limit = int(request.form.get('limit', 10))
+        except (ValueError, TypeError) as e:
+            flash(f"Invalid form data: {str(e)}", "error")
+            return redirect(url_for('index'))
         
-        # Get raid targets
-        my_nation, targets = get_raid_targets(args)
+        try:
+            # Get raid targets
+            my_nation, targets = get_raid_targets(args)
+        except Exception as e:
+            import traceback
+            error_details = traceback.format_exc()
+            print(f"Error in get_raid_targets: {str(e)}\n{error_details}")
+            flash(f"Error getting targets: {str(e)}", "error")
+            return redirect(url_for('index'))
         
         # Prepare data for template
         data = {
             'my_nation': my_nation,
-            'targets': targets,
+            'targets': targets if targets else [],  # Ensure targets is never None
             'params': {
                 'min_infra': args.min_infra,
                 'max_infra': args.max_infra,
@@ -52,14 +63,16 @@ def scan():
             }
         }
         
-        # Helper functions for templates
-        data['format_money'] = format_money
-        data['format_hours'] = format_hours
-        
-        return render_template('results.html', data=data)
+        # Helper functions for templates - pass as separate arguments to avoid string formatting issues
+        return render_template('results.html', data=data, 
+                              format_money=format_money, 
+                              format_hours=format_hours)
     
     except Exception as e:
-        flash(f"Error: {str(e)}", "error")
+        import traceback
+        error_details = traceback.format_exc()
+        print(f"Unhandled error in scan route: {str(e)}\n{error_details}")
+        flash(f"An unexpected error occurred: {str(e)}", "error")
         return redirect(url_for('index'))
 
 @app.route('/api/scan', methods=['POST'])
