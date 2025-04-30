@@ -141,7 +141,8 @@ def get_raid_targets(args):
             
             # Check if we should continue to next page
             paginator = nations_data.get("paginatorInfo", {})
-            if not paginator.get("hasMorePages") or page >= MAX_PAGES:  # Stop at max pages
+            if not paginator.get("hasMorePages") or page >= args.max_pages:  # Stop at max pages
+                print(f"\nReached page limit ({page}/{args.max_pages})")
                 break
                 
             page += 1
