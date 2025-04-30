@@ -94,24 +94,21 @@
                                             Total targets found
                                             <span class="badge bg-primary rounded-pill">{{ data.targets|length }}</span>
                                         </li>
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            Nations with previous losses
-                                            <span class="badge bg-success rounded-pill">{{ data.targets|selectattr('money_lost', 'defined')|selectattr('money_lost', '>', 0)|list|length }} / {{ data.targets|length }}</span>
-                                        </li>
+
                                     </ul>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="alert alert-success">
-                                    <h5>Infrastructure & Loot</h5>
+                                    <h5>Infrastructure Statistics</h5>
                                     <ul class="list-group mt-2">
                                         <li class="list-group-item d-flex justify-content-between align-items-center">
                                             Total infrastructure
                                             <span class="badge bg-primary rounded-pill">{{ '{:,.2f}'.format(data.targets|sum(attribute='infra')) }}</span>
                                         </li>
                                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            Total previous losses
-                                            <span class="badge bg-danger rounded-pill">{{ format_money(data.targets|sum(attribute='money_lost')) }}</span>
+                                            Average infrastructure
+                                            <span class="badge bg-info rounded-pill">{{ '{:,.2f}'.format(data.targets|sum(attribute='infra') / data.targets|length if data.targets|length > 0 else 0) }}</span>
                                         </li>
                                     </ul>
                                 </div>
@@ -143,13 +140,12 @@
                                         <th>Inactive</th>
                                         <th>Military</th>
                                         <th>War Status</th>
-                                        <th>Money Lost</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {% for target in data.targets %}
-                                    <tr{% if target.money_lost > 1000000 %} class="table-success"{% endif %}>
+                                    <tr{% if target.infra > 10000 %} class="table-success"{% endif %}>
                                         <td>{{ loop.index }}</td>
                                         <td>
                                             <strong>{{ target.name }}</strong><br>
@@ -167,7 +163,6 @@
                                             {{ format_hours(target.hours_since_war) }} ago<br>
                                             <span class="badge bg-success">No active wars</span>
                                         </td>
-                                        <td>{{ format_money(target.money_lost) }}</td>
                                         <td>
                                             <a href="https://politicsandwar.com/nation/id={{ target.id }}" target="_blank" class="btn btn-primary btn-sm mb-1">
                                                 <i data-feather="external-link"></i> View
@@ -200,10 +195,10 @@
             <div class="col-md-6">
                 <div class="card shadow">
                     <div class="card-header bg-dark text-white">
-                        <h3>Target Money Loss Distribution</h3>
+                        <h3>Target Inactivity Distribution</h3>
                     </div>
                     <div class="card-body">
-                        <canvas id="moneyChart" height="300"></canvas>
+                        <canvas id="inactiveChart" height="300"></canvas>
                     </div>
                 </div>
             </div>
@@ -255,17 +250,17 @@
                 }
             });
             
-            // Money loss chart
-            var moneyCtx = document.getElementById('moneyChart').getContext('2d');
-            var moneyChart = new Chart(moneyCtx, {
+            // Inactivity chart
+            var inactiveCtx = document.getElementById('inactiveChart').getContext('2d');
+            var inactiveChart = new Chart(inactiveCtx, {
                 type: 'bar',
                 data: {
                     labels: [{% for target in data.targets %}'{{ target.name }}'{% if not loop.last %}, {% endif %}{% endfor %}],
                     datasets: [{
-                        label: 'Money Lost in Wars',
-                        data: [{% for target in data.targets %}{{ target.money_lost }}{% if not loop.last %}, {% endif %}{% endfor %}],
-                        backgroundColor: 'rgba(255, 99, 132, 0.5)',
-                        borderColor: 'rgba(255, 99, 132, 1)',
+                        label: 'Days Inactive',
+                        data: [{% for target in data.targets %}{{ target.inactive_days }}{% if not loop.last %}, {% endif %}{% endfor %}],
+                        backgroundColor: 'rgba(255, 159, 64, 0.5)',
+                        borderColor: 'rgba(255, 159, 64, 1)',
                         borderWidth: 1
                     }]
                 },
@@ -276,7 +271,7 @@
                             beginAtZero: true,
                             title: {
                                 display: true,
-                                text: 'Money Lost ($)'
+                                text: 'Days Inactive'
                             }
                         }
                     }

@@ -149,18 +149,15 @@ def api_scan():
             
             # Calculate summary statistics
             total_infra = sum(t['infra'] for t in targets) if targets else 0
-            total_money_lost = sum(t.get('money_lost', 0) for t in targets) if targets else 0
-            nations_with_losses = sum(1 for t in targets if t.get('money_lost', 0) > 0) if targets else 0
             
             # Print results to console for command-line viewing
-            print(f"\n🎯 Top {len(targets)} Raid Targets from API (sorted by money lost):")
+            print(f"\n🎯 Top {len(targets)} Raid Targets from API (sorted by infrastructure):")
             for i, t in enumerate(targets, 1):
                 nation_url = f"https://politicsandwar.com/nation/id={t['id']}"
                 print(f"{i}. {t['name']} (ID: {t['id']}) | {t['alliance']}")
                 print(f"  Score: {t['score']:,.2f} | Infra: {t['infra']:,.2f} | Cities: {t.get('city_count', '?')}")
                 print(f"  Intel: {t['spies']} spies | Troops: {t['soldiers']:,}/{t['max_soldiers']:,}")
                 print(f"  Inactive: {t['inactive_days']}d | Last war: {format_hours(t.get('hours_since_war'))} ago")
-                print(f"  Money lost in wars: {format_money(t.get('money_lost', 0))}")
                 print(f"  War Status: ✅ No active wars")
                 print(f"  URL: {nation_url}")
                 print(f"  Attack: https://politicsandwar.com/nation/war/declare/id={t['id']}")
