@@ -17,9 +17,12 @@ def index():
     """Render the main page with the form."""
     return render_template('index.html')
 
-@app.route('/scan', methods=['POST'])
+@app.route('/scan', methods=['GET', 'POST'])
 def scan():
     """Process the form and scan for raid targets."""
+    if request.method == 'GET':
+        # If someone navigates directly to /scan, redirect them to the form
+        return redirect(url_for('index'))
     try:
         # Create a namespace object similar to what argparse would return
         class Args:
