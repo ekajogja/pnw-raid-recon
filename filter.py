@@ -22,22 +22,23 @@ def count_wars_lost(wars, nation_id):
     return 0
 
 def get_war_stats(nation, now):
-    """Get stats about wars and check if there are any active wars."""
+    """Get stats about wars and check if there are any active defensive wars."""
     wars = nation.get("wars", [])
+    
+    # If nation has no wars at all
     if not wars:
         return False, None, 0
     
-    # Just follow the simplified approach: Only check if the most recent war has turnsleft > 0
-    # Per user: "for the nation war, just query turnsleft and date, then make 
-    # sure the latest date has turnsleft 0"
+    # Check if the nation has defensive war slots available
+    # In Politics & War, each nation has 3 defensive war slots
+    # If defensive_wars < 3, they can still be attacked
+    defensive_wars = nation.get("defensive_wars", 0)
     
-    # Get the most recent war (first in the list)
-    last_war = wars[0]  # First war is the most recent
-    
-    # Check if the most recent war is active (turnsleft > 0)
-    has_active_war = int(last_war.get("turnsleft", 0)) > 0
+    # If the nation has 3 defensive wars, they cannot be attacked
+    has_active_war = (defensive_wars >= 3)
     
     # Get time since most recent war
+    last_war = wars[0]  # First war is the most recent
     war_date = datetime.strptime(last_war["date"], "%Y-%m-%dT%H:%M:%S%z")
     hours_since_war = (now - war_date.replace(tzinfo=None)).total_seconds() / 3600
     

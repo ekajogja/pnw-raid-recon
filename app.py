@@ -158,7 +158,7 @@ def api_scan():
                 print(f"  Score: {t['score']:,.2f} | Infra: {t['infra']:,.2f} | Cities: {t.get('city_count', '?')}")
                 print(f"  Intel: {t['spies']} spies | Troops: {t['soldiers']:,}/{t['max_soldiers']:,}")
                 print(f"  Inactive: {t['inactive_days']}d | Last war: {format_hours(t.get('hours_since_war'))} ago")
-                print(f"  War Status: ✅ No active wars")
+                print(f"  War Status: ✅ Defensive slots available")
                 print(f"  URL: {nation_url}")
                 print(f"  Attack: https://politicsandwar.com/nation/war/declare/id={t['id']}")
                 print()
