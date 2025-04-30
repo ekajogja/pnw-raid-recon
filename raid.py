@@ -31,6 +31,8 @@ def parse_args():
                       help=f'Maximum enemy/friendly troop ratio (default: {MAX_SOLDIER_RATIO})')
     parser.add_argument('--json', action='store_true', help='Output results in JSON format')
     parser.add_argument('--limit', type=int, default=10, help='Limit number of results (default: 10)')
+    parser.add_argument('--max-pages', type=int, default=MAX_PAGES, 
+                      help=f'Maximum number of pages to fetch (default: {MAX_PAGES}, use smaller number for testing)')
     return parser.parse_args()
 
 def format_param_info(name, value, description=None):
@@ -103,21 +105,20 @@ def get_raid_targets(args):
     
     while True:
         try:
+            print(f"Fetching page {page}...")
             nations_data = get_nations(page)
             
             if not nations_data["data"]:  # No more nations to fetch
                 break
                 
-            all_nations.extend(nations_data["data"])
+            # Process just the current page of nations
+            current_page_nations = nations_data["data"]
+            all_nations.extend(current_page_nations)
             pbar.update(1)
             
-            # Check if we should continue to next page
-            paginator = nations_data.get("paginatorInfo", {})
-            if not paginator.get("hasMorePages") or page >= MAX_PAGES:  # Stop at max pages
-                break
-                
-            filtered = filter_targets(
-                all_nations,
+            # Filter just the current page nations (faster)
+            new_targets = filter_targets(
+                current_page_nations,
                 my_nation,
                 min_infra=args.min_infra,
                 max_infra=args.max_infra,
@@ -125,8 +126,22 @@ def get_raid_targets(args):
                 ignore_alliance=args.ignore_dnr,
                 max_soldier_ratio=args.troop_ratio
             )
-            if len(filtered) >= args.limit:  # We have enough targets
-                filtered = filtered[:args.limit]  # Limit to requested amount
+            
+            # Add new targets to our filtered list
+            filtered.extend(new_targets)
+            
+            # Sort by infrastructure (highest first)
+            filtered = sorted(filtered, key=lambda x: x["infra"], reverse=True)
+            
+            # Limit to the requested number of targets
+            if len(filtered) >= args.limit:
+                filtered = filtered[:args.limit]
+                print(f"\nFound {len(filtered)} targets, stopping search")
+                break
+            
+            # Check if we should continue to next page
+            paginator = nations_data.get("paginatorInfo", {})
+            if not paginator.get("hasMorePages") or page >= MAX_PAGES:  # Stop at max pages
                 break
                 
             page += 1

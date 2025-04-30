@@ -31,12 +31,23 @@ def get_war_stats(nation, now):
     
     # Check if the nation has defensive war slots available
     # In Politics & War, each nation has 3 defensive war slots
-    # If defensive_wars field exists, check if it has active defensive wars
-    defensive_wars = nation.get("defensive_wars", [])
+    all_defensive_wars = nation.get("defensive_wars", [])
+    
+    # Filter to only count active wars (turnsleft > 0)
+    active_defensive_wars = [war for war in all_defensive_wars if int(war.get('turnsleft', 0)) > 0]
+    
+    # Print defensive wars info for debugging
+    def_war_count = len(active_defensive_wars)
+    nation_name = nation.get('nation_name', 'Unknown')
+    if len(all_defensive_wars) > 0:
+        active_str = f"{def_war_count} active out of {len(all_defensive_wars)} total"
+        print(f"Nation {nation_name} has {active_str} defensive wars")
+        if def_war_count > 0:
+            print(f"  Active defensive wars: {active_defensive_wars}")
     
     # Check how many active defensive wars the nation has
-    # If they have 3 defensive wars, they cannot be attacked
-    has_active_war = (len(defensive_wars) >= 3)
+    # If they have 3 or more active defensive wars, they cannot be attacked
+    has_active_war = (def_war_count >= 3)
     
     # Get time since most recent war
     last_war = wars[0]  # First war is the most recent
@@ -92,14 +103,21 @@ def filter_targets(nations, my_nation, min_infra=1500, max_infra=20000,
     max_soldiers = int(float(my_nation["soldiers"]) * max_soldier_ratio)
     max_spies = int(float(my_nation.get("spies", 0)) * MAX_SPIES_RATIO)
 
+    # Print filtering status
+    print(f"Filtering {len(nations)} nations...")
+    
     for n in nations:
         try:
+            nation_name = n.get("nation_name", "Unknown")
+            
             # Skip nations in vacation mode
             if n.get("vacation_mode_turns", 0) > 0:
+                #print(f"Skipping {nation_name}: vacation mode")
                 continue
 
             # Skip nations in beige color (protected for 2 days after losing a war)
             if n.get("color", "").lower() == "beige":
+                #print(f"Skipping {nation_name}: beige protection")
                 continue
 
             # Check war status from last war only
@@ -107,10 +125,12 @@ def filter_targets(nations, my_nation, min_infra=1500, max_infra=20000,
             
             # Skip if nation has active war
             if has_active_war:
+                #print(f"Skipping {nation_name}: has active wars (no def slots)")
                 continue
                 
             # Skip if last war was too recent (less than 24h ago)
             if hours_since_war is not None and hours_since_war < 24:
+                #print(f"Skipping {nation_name}: recent war activity")
                 continue
 
             # Parse last active date
@@ -119,30 +139,36 @@ def filter_targets(nations, my_nation, min_infra=1500, max_infra=20000,
             
             # Check inactivity threshold
             if days_inactive <= min_inactive_days:
+                #print(f"Skipping {nation_name}: too active ({days_inactive} days)")
                 continue
 
             # Check alliance
             if not ignore_alliance:
                 # Skip if nation has alliance
                 if n["alliance_id"] != "0" and n["alliance_id"] is not None:
+                    #print(f"Skipping {nation_name}: has alliance")
                     continue
 
             # Must be within war range
             if float(n["score"]) < min_score or float(n["score"]) > max_score:
+                #print(f"Skipping {nation_name}: outside war range")
                 continue
 
             # Check soldier count against ratio
             if int(n.get("soldiers", 0)) > max_soldiers:
+                #print(f"Skipping {nation_name}: too many troops")
                 continue
 
             # Check spy count against ratio
             if int(n.get("spies", 0)) > max_spies:
+                #print(f"Skipping {nation_name}: too many spies")
                 continue
 
             # Calculate total infrastructure
             infra_total = total_infra(n["cities"])
             # Check infrastructure range
             if infra_total < min_infra or infra_total > max_infra:
+                #print(f"Skipping {nation_name}: infra outside range")
                 continue
 
             # If we get here, target meets all criteria
@@ -150,6 +176,9 @@ def filter_targets(nations, my_nation, min_infra=1500, max_infra=20000,
             if n["alliance_id"] != "0" and n["alliance_id"] is not None:
                 alliance_name = n.get("alliance", {}).get("name", "Has Alliance")
 
+            # Found a match! Add to results
+            print(f"✅ MATCH: {nation_name} - {infra_total:,.2f} infra, {days_inactive}d inactive")
+            
             results.append({
                 "name": n["nation_name"],
                 "id": n["id"],
