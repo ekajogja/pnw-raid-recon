@@ -18,7 +18,7 @@ def get_last_updated():
         return datetime.now().strftime("%Y-%m-%d")  # Fallback to current date
 
 def parse_args():
-    parser = argparse.ArgumentParser(description='PnW Raid Scanner - Find optimal loot targets')
+    parser = argparse.ArgumentParser(description='PnW Raid Recon - Find optimal raiding targets')
     parser.add_argument('--min-infra', type=int, default=MIN_INFRA,
                       help=f'Minimum target infra (default: {MIN_INFRA:,})')
     parser.add_argument('--max-infra', type=int, default=MAX_INFRA,
@@ -177,7 +177,7 @@ def get_raid_targets(args):
 def main():
     try:
         args = parse_args()
-        print("[🏴‍☠️] PnW Raid Scanner - Finding optimal targets...\n")
+        print("[🏴‍☠️] PnW Raid Recon - Finding optimal targets...\n")
         
         my_nation, filtered = get_raid_targets(args)
         
@@ -218,7 +218,7 @@ def main():
 
         # Print footer
         print("\n" + "=" * 80)
-        print(f"PnW Raid Scanner - last updated {get_last_updated()}")
+        print(f"PnW Raid Recon - last updated {get_last_updated()}")
         print("For optimal raiding results and to avoid counters, respect DNR lists and alliance treaties")
         print("=" * 80)
 
