@@ -37,7 +37,7 @@
                                 <div class="col-md-6">
                                     <label for="min_infra" class="form-label">Minimum Infrastructure</label>
                                     <div class="input-group">
-                                        <input type="number" class="form-control" id="min_infra" name="min_infra" value="2500" min="0">
+                                        <input type="number" class="form-control" id="min_infra" name="min_infra" value="900" min="0">
                                         <span class="input-group-text"><i data-feather="bar-chart-2"></i></span>
                                     </div>
                                     <small class="text-muted">Minimum total infra to consider target worth raiding</small>
@@ -56,18 +56,18 @@
                                 <div class="col-md-6">
                                     <label for="inactive_time" class="form-label">Minimum Inactive Time (days)</label>
                                     <div class="input-group">
-                                        <input type="number" class="form-control" id="inactive_time" name="inactive_time" value="1.5" min="0" step="0.1">
+                                        <input type="number" class="form-control" id="inactive_time" name="inactive_time" value="1.0" min="0" step="0.1">
                                         <span class="input-group-text"><i data-feather="clock"></i></span>
                                     </div>
-                                    <small class="text-muted">Minimum time inactive to avoid counters (1.5 = 36 hours)</small>
+                                    <small class="text-muted">Minimum time inactive to avoid counters (1.0 = 24 hours)</small>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="troop_ratio" class="form-label">Maximum Troop Ratio</label>
                                     <div class="input-group">
-                                        <input type="number" class="form-control" id="troop_ratio" name="troop_ratio" value="0.1" min="0" max="1" step="0.05">
+                                        <input type="number" class="form-control" id="troop_ratio" name="troop_ratio" value="0.75" min="0" max="1" step="0.05">
                                         <span class="input-group-text"><i data-feather="users"></i></span>
                                     </div>
-                                    <small class="text-muted">Max enemy/friendly troop ratio (0.1 = 10% of your troops)</small>
+                                    <small class="text-muted">Max enemy/friendly troop ratio (0.75 = 75% of your troops)</small>
                                 </div>
                             </div>
 
@@ -80,12 +80,24 @@
                                     <small class="text-muted">Show nations in alliances but still respect treaties</small>
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="limit" class="form-label">Result Limit</label>
-                                    <div class="input-group">
-                                        <input type="number" class="form-control" id="limit" name="limit" value="10" min="1" max="50">
-                                        <span class="input-group-text"><i data-feather="list"></i></span>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="limit" class="form-label">Result Limit</label>
+                                            <div class="input-group">
+                                                <input type="number" class="form-control" id="limit" name="limit" value="10" min="1" max="50">
+                                                <span class="input-group-text"><i data-feather="list"></i></span>
+                                            </div>
+                                            <small class="text-muted">Max targets to return</small>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="max_pages" class="form-label">Max Pages</label>
+                                            <div class="input-group">
+                                                <input type="number" class="form-control" id="max_pages" name="max_pages" value="10" min="1" max="50">
+                                                <span class="input-group-text"><i data-feather="file"></i></span>
+                                            </div>
+                                            <small class="text-muted">API pages to scan</small>
+                                        </div>
                                     </div>
-                                    <small class="text-muted">Maximum number of targets to return</small>
                                 </div>
                             </div>
 

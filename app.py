@@ -31,14 +31,17 @@ def scan():
         args = Args()
         
         try:
+            # Import config values as defaults
+            from config import MIN_INFRA, MAX_INFRA, MIN_INACTIVE_DAYS, MAX_SOLDIER_RATIO, IGNORE_DNR, MAX_PAGES
+            
             # Set default values
-            args.min_infra = int(request.form.get('min_infra', 2500))
-            args.max_infra = int(request.form.get('max_infra', 20000))
-            args.inactive_time = float(request.form.get('inactive_time', 1.5))
+            args.min_infra = int(request.form.get('min_infra', MIN_INFRA))
+            args.max_infra = int(request.form.get('max_infra', MAX_INFRA))
+            args.inactive_time = float(request.form.get('inactive_time', MIN_INACTIVE_DAYS))
             args.ignore_dnr = request.form.get('ignore_dnr') == 'true'
-            args.troop_ratio = float(request.form.get('troop_ratio', 0.1))
+            args.troop_ratio = float(request.form.get('troop_ratio', MAX_SOLDIER_RATIO))
             args.limit = int(request.form.get('limit', 10))
-            args.max_pages = int(request.form.get('max_pages', 5))
+            args.max_pages = int(request.form.get('max_pages', MAX_PAGES))
         except (ValueError, TypeError) as e:
             flash(f"Invalid form data: {str(e)}", "error")
             return redirect(url_for('index'))
@@ -135,14 +138,17 @@ def api_scan():
         req_data = request.get_json() or {}
         
         try:
+            # Import config values as defaults
+            from config import MIN_INFRA, MAX_INFRA, MIN_INACTIVE_DAYS, MAX_SOLDIER_RATIO, IGNORE_DNR, MAX_PAGES
+            
             # Set default values
-            args.min_infra = int(req_data.get('min_infra', 2500))
-            args.max_infra = int(req_data.get('max_infra', 20000))
-            args.inactive_time = float(req_data.get('inactive_time', 1.5))
-            args.ignore_dnr = req_data.get('ignore_dnr', False)
-            args.troop_ratio = float(req_data.get('troop_ratio', 0.1))
+            args.min_infra = int(req_data.get('min_infra', MIN_INFRA))
+            args.max_infra = int(req_data.get('max_infra', MAX_INFRA))
+            args.inactive_time = float(req_data.get('inactive_time', MIN_INACTIVE_DAYS))
+            args.ignore_dnr = req_data.get('ignore_dnr', IGNORE_DNR)
+            args.troop_ratio = float(req_data.get('troop_ratio', MAX_SOLDIER_RATIO))
             args.limit = int(req_data.get('limit', 10))
-            args.max_pages = int(req_data.get('max_pages', 5))
+            args.max_pages = int(req_data.get('max_pages', MAX_PAGES))
         except (ValueError, TypeError) as e:
             return jsonify({'error': f'Invalid parameter: {str(e)}'}), 400
         

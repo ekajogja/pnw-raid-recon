@@ -8,9 +8,9 @@ if not API_KEY:
     raise ValueError("API key not found. Please set PNW_API_KEY in .env file.")
 
 # Default raid target filters
-MIN_INFRA = 2500  # Minimum total infra to consider target worth raiding
+MIN_INFRA = 900  # Minimum total infra to consider target worth raiding
 MAX_INFRA = 20000  # Maximum total infra (higher might be too defended)
-MIN_INACTIVE_DAYS = 1.5  # 36 hours minimum inactive time to avoid counters
+MIN_INACTIVE_DAYS = 1  # 36 hours minimum inactive time to avoid counters
 IGNORE_DNR = False  # If True, will show nations with alliances too (DNR = Do Not Raid)
 MAX_PAGES = 10  # Maximum number of pages to fetch from the API
 
@@ -19,8 +19,8 @@ MIN_SCORE_RATIO = 0.75  # Can down-declare to 25% of your score for raid wars
 MAX_SCORE_RATIO = 1.5  # Can up-declare to 150% of your score for raid wars
 
 # Military requirements
-MAX_SOLDIER_RATIO = 0.1  # Target must have less than 10% of your troops to minimize casualties
-MAX_SPIES_RATIO = 1.0  # Target must have less than 100% of your spies to minimize losses
+MAX_SOLDIER_RATIO = 0.75  # Target must have less than 10% of your troops to minimize casualties
+MAX_SPIES_RATIO = 5.0  # Target must have less than 100% of your spies to minimize losses
 
 # Web app settings
 DEBUG = os.getenv("DEBUG", "False").lower() == "true"
