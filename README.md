@@ -1,8 +1,8 @@
 # PnW Raid Recon
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)  ![Flask](https://img.shields.io/badge/flask-%23000.svg?style=for-the-badge&logo=flask&logoColor=white)
 
-A sophisticated web-based tool designed for Politics and War players to strategically identify and analyze optimal raiding targets while minimizing diplomatic risks.
+A sophisticated web-based tool designed for [Politics and War](https://politicsandwar.com/) players to strategically identify and analyze optimal raiding targets while minimizing diplomatic risks.
 
 ## Key Features
 
@@ -127,4 +127,4 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the [MIT License](https://opensource.org/license/mit) - see the LICENSE file for details.
