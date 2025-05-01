@@ -16,22 +16,26 @@ A sophisticated web-based tool designed for Politics and War players to strategi
 ## Installation
 
 1. Clone this repository:
+
    ```
    git clone https://github.com/yourusername/PnW-Raid-Recon.git
    cd PnW-Raid-Recon
    ```
 
 2. Set up your environment variables by copying the sample file:
+
    ```
    cp .env.sample .env
    ```
 
 3. Edit the `.env` file with your Politics & War API key:
+
    ```
    PNW_API_KEY=your_api_key_here
    ```
 
 4. Install required packages:
+
    ```
    pip install -r requirements.txt
    ```
@@ -46,7 +50,15 @@ Run the Flask application:
 python app.py
 ```
 
-This will start a web server at http://localhost:5000 where you can configure parameters and search for targets through the browser interface.
+This will start a web server at <http://localhost:5000> where you can configure parameters and search for targets through the browser interface.
+
+#### Start page
+
+![web ui start](screenshots/ss-ui-start.png)
+
+#### Result page
+
+![web ui result](screenshots/ss-ui-result.png)
 
 ### Command Line Interface
 
@@ -55,6 +67,10 @@ Run directly from the command line for quick results:
 ```
 python raid.py
 ```
+
+#### Command result
+
+![cli result](screenshots/ss-cli-result.png)
 
 ### Command Line Options
 

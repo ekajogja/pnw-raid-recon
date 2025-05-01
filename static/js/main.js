@@ -1,4 +1,3 @@
-// Main JavaScript for PnW Raid Scanner
 
 document.addEventListener('DOMContentLoaded', function() {
     // Handle form submission with loading state
