@@ -111,3 +111,27 @@ footer {
     font-weight: 500;
     padding: 5px 10px;
 }
+
+/* Password Gate Styling */
+.password-gate {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1050; /* Ensure it's above other content, like Bootstrap modals */
+}
+
+.password-container {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+}

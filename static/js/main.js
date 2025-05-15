@@ -9,18 +9,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const scanForm = document.querySelector('form');
     const apiKeyHiddenInput = document.getElementById('api_key_hidden'); // Hidden input for API key
 
-    const correctPassword = "Hail Shogun!"; // The required password
+    const correctPassword = "banzaishogun"; // The required password
 
-    // Check if password is already stored in local storage (optional persistence)
-    const storedPassword = localStorage.getItem('pnw_raid_scanner_password');
-    if (storedPassword === correctPassword) {
-        passwordGate.style.display = 'none';
-        mainContent.style.display = 'block';
-        loadApiKey(); // Load API key if password is correct
-    } else {
-        passwordGate.style.display = 'flex'; // Use flex to center content
-        mainContent.style.display = 'none';
-    }
+    // The password gate will always be shown on page load
+    passwordGate.style.display = 'flex'; // Use flex to center content
+    mainContent.style.display = 'none';
+    loadApiKey(); // Load API key even if password is not stored
 
     // Password submit button event listener
     if (passwordSubmit) {
@@ -29,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 passwordGate.style.display = 'none';
                 mainContent.style.display = 'block';
                 passwordError.style.display = 'none';
-                localStorage.setItem('pnw_raid_scanner_password', correctPassword); // Store password (optional)
+                // Removed localStorage.setItem for password to prevent storing it
                 loadApiKey(); // Load API key after successful login
             } else {
                 passwordError.style.display = 'block';
