@@ -1,4 +1,4 @@
-# PnW Raid Recon
+# Samurai Raid Scanner
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)  ![Flask](https://img.shields.io/badge/flask-%23000.svg?style=for-the-badge&logo=flask&logoColor=white)
 
@@ -22,19 +22,7 @@ A sophisticated web-based tool designed for [Politics and War](https://politicsa
    cd PnW-Raid-Recon
    ```
 
-2. Set up your environment variables by copying the sample file:
-
-   ```
-   cp .env.sample .env
-   ```
-
-3. Edit the `.env` file with your Politics & War API key:
-
-   ```
-   PNW_API_KEY=your_api_key_here
-   ```
-
-4. Install required packages:
+2. Install required packages:
 
    ```
    pip install -r requirements.txt
@@ -50,7 +38,9 @@ Run the Flask application:
 python app.py
 ```
 
-This will start a web server at <http://localhost:5000> where you can configure parameters and search for targets through the browser interface.
+This will start a web server at <http://localhost:5000>.
+
+Access the application in your web browser. You will be prompted to enter a password ("Hail Shogun!") before accessing the main content. After entering the correct password, you can input your Politics & War API key directly on the page. The API key will be stored in your browser's local storage for convenience (note: this means the API key is accessible in your browser).
 
 #### Start page
 
@@ -105,7 +95,7 @@ MAX_SOLDIER_RATIO = 0.75    # Maximum enemy/friendly troop ratio
 
 ## How It Works
 
-1. **Authentication**: Uses your P&W API key to access nation data
+1. **Authentication**: Uses your P&W API key (provided via the frontend) to access nation data
 2. **Filtering**: Applies intelligent filtering to identify optimal targets:
    - Infrastructure within specified range
    - Nation score within valid war range (75-150% of your score)

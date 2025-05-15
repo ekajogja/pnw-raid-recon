@@ -59,9 +59,9 @@ def format_loot(loot, loot_value=None):
         return f"Lost ${loot['money']:,.0f}"
     return "No losses"
 
-def get_raid_targets(args):
+def get_raid_targets(api_key, args):
     # Get my nation's info first
-    my_nation = get_my_nation()
+    my_nation = get_my_nation(api_key)
     max_soldiers = int(float(my_nation["soldiers"]) * args.troop_ratio)
     
     # Display all parameters and their meanings
@@ -106,8 +106,8 @@ def get_raid_targets(args):
     while True:
         try:
             print(f"Fetching page {page}...")
-            nations_data = get_nations(page)
-            
+            nations_data = get_nations(api_key, page)
+
             if not nations_data["data"]:  # No more nations to fetch
                 break
                 
@@ -159,7 +159,7 @@ def get_raid_targets(args):
                 try:
                     print("Retrying with a 5-second delay...")
                     time.sleep(5)
-                    nations_data = get_nations(page)
+                    nations_data = get_nations(api_key, page)
                     all_nations.extend(nations_data["data"])
                     pbar.update(1)
                     page += 1
@@ -177,10 +177,16 @@ def get_raid_targets(args):
 def main():
     try:
         args = parse_args()
-        print("[🏴‍☠️] PnW Raid Recon - Finding optimal targets...\n")
-        
-        my_nation, filtered = get_raid_targets(args)
-        
+        print("[⚔️] Samurai Raid Scanner - Finding optimal targets...\n")
+
+        # For CLI usage, the API key still needs to come from the environment
+        # This part of the code is for the CLI, not the web interface
+        api_key = os.getenv("PNW_API_KEY")
+        if not api_key:
+             raise ValueError("PNW_API_KEY environment variable is not set for CLI usage.")
+
+        my_nation, filtered = get_raid_targets(api_key, args)
+
         if args.json:
             import json
             print(json.dumps(filtered, indent=2))
@@ -218,7 +224,7 @@ def main():
 
         # Print footer
         print("\n" + "=" * 80)
-        print(f"PnW Raid Recon - last updated {get_last_updated()}")
+        print(f"Samurai Raid Scanner - last updated {get_last_updated()}")
         print("For optimal raiding results and to avoid counters, respect DNR lists and alliance treaties")
         print("=" * 80)
 

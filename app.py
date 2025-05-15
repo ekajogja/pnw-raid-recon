@@ -45,10 +45,11 @@ def scan():
         except (ValueError, TypeError) as e:
             flash(f"Invalid form data: {str(e)}", "error")
             return redirect(url_for('index'))
-        
+        args.api_key = request.form.get('api_key') # Get API key from form
+
         try:
             # Get raid targets
-            my_nation, targets = get_raid_targets(args)
+            my_nation, targets = get_raid_targets(args.api_key, args) # Pass API key to function
         except ValueError as e:
             # Handle expected API errors with a clear user message
             error_message = str(e)
