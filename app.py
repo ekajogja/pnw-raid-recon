@@ -170,7 +170,7 @@ def api_scan():
                 print(f"  Inactive: {t['inactive_days']}d | Last war: {format_hours(t.get('hours_since_war'))} ago")
                 print(f"  War Status: ✅ No active defensive wars")
                 print(f"  URL: {nation_url}")
-                print(f"  Attack: https://politicsandwar.com/nation/war/declare/id={t['id']}")
+                print(f"  Attack: https://politicsandwar.com/nation/war/declare/declare/id={t['id']}")
                 print()
         except ValueError as e:
             # Handle expected API errors with specific status codes and messages
@@ -213,4 +213,4 @@ def api_scan():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=DEBUG)
+    app.run(host='0.0.0.0', port=8080, debug=DEBUG)
