@@ -1,6 +1,7 @@
 import requests
 import time
 import os
+from filter_beige import filter_beige_targets # Import the new filtering function
 # Removed: from config import API_KEY - API key will be passed as parameter
 
 # Removed: API_URL = f"https://api.politicsandwar.com/graphql?api_key={API_KEY}" - URL will be built in run_query
@@ -91,8 +92,6 @@ def get_my_nation(api_key: str):
         nation {
           id
           score
-          soldiers
-          spies
           alliance {
             id
             name
@@ -134,36 +133,42 @@ def get_nations(api_key: str, page=1):
     Raises:
         ValueError: If the API returns an error or unexpected response structure
     """
-    query = f"""
+    query = """
     {{
       nations(page: {page}, first: 500) {{
         data {{
           id
           nation_name
           score
-          last_active
           alliance_id
-          soldiers
-          spies
           vacation_mode_turns
+          beige_turns
           color
+          soldiers
+          tanks
+          aircraft
+          ships
+          missiles
+          nukes
+          spies
           alliance {{
             id
             name
           }}
-          cities {{
-            infrastructure
-          }}
           wars {{
-            turnsleft
+            turns_left
             date
             def_id
           }}
-          war_policy
-          defensive_wars {{
-            id
-            turnsleft
-            def_id
+          bankrecs(orderBy: {{ column: DATE, order: DESC }}, limit: 10) {{
+            date
+            sender {{
+              id
+            }}
+            receiver {{
+              id
+            }}
+            money
           }}
         }}
         paginatorInfo {{
@@ -172,7 +177,7 @@ def get_nations(api_key: str, page=1):
         }}
       }}
     }}
-    """
+    """.format(page=page)
     # Run the query - error handling happens in run_query function
     data = run_query(api_key, query)
 
@@ -189,6 +194,59 @@ def get_nations(api_key: str, page=1):
     print(f"Successfully fetched {nation_count} nations from API (page {page})")
 
     return data["data"]["nations"]
+
+def get_beige_nations(api_key: str, args, min_score_ratio: float, max_score_ratio: float):
+    """
+    Get a list of beige nations with 1 beige turn left.
+
+    Args:
+        api_key: The Politics & War API key.
+        args: An object containing filtering parameters (limit, max_pages, ignore_dnr).
+        min_score_ratio: Minimum target score ratio relative to user's nation score.
+        max_score_ratio: Maximum target score ratio relative to user's nation score.
+
+    Returns:
+        Tuple containing user's nation data and a list of beige nations.
+
+    Raises:
+        ValueError: If the API returns an error or unexpected response structure.
+    """
+    my_nation = get_my_nation(api_key)
+    filtered_beige_nations = []
+    page = 1
+    has_more_pages = True
+
+    while has_more_pages and page <= args.max_pages:
+        nations_data = get_nations(api_key, page)
+        
+        # Filter nations on the current page
+        filtered_on_page = filter_beige_targets(nations_data['data'], my_nation, args, min_score_ratio, max_score_ratio)
+        
+        # Add filtered nations from this page to the overall list
+        filtered_beige_nations.extend(filtered_on_page)
+        
+        # Check if we have reached the limit
+        if len(filtered_beige_nations) >= args.limit:
+            print(f"Limit of {args.limit} reached, stopping page fetching.")
+            break # Stop fetching pages if limit is reached
+            
+        has_more_pages = nations_data['paginatorInfo']['hasMorePages']
+        page += 1
+
+    # Sort and apply limit to the collected filtered nations
+    # The filter_beige_targets function already sorts and limits, but we need to re-sort
+    # and limit the combined list from multiple pages if the limit wasn't exactly met
+    # when breaking the loop. However, since filter_beige_targets now filters page by page,
+    # we need to sort and limit the accumulated list here.
+    
+    # Re-sort the accumulated filtered nations (filter_beige_targets sorts each page)
+    filtered_beige_nations.sort(key=lambda x: (x.get('beige_turns', 0), -x.get('score', 0)))
+
+    # Apply the limit to the final sorted list
+    final_filtered_nations = filtered_beige_nations[:args.limit]
+
+
+    return my_nation, final_filtered_nations
 
 def has_treaty(my_alliance, target_alliance, protected_types=None):
     """

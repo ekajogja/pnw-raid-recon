@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Samurai Raid Scanner - Results</title>
+    <title>Samurai Beige Finder - Results</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
@@ -13,14 +13,14 @@
     <div class="container">
         <header class="py-3 text-center">
             <img src="{{ url_for('static', filename='assets/samurai-flag.png') }}" alt="Samurai Flag" style="height: 120px; vertical-align: middle; display: inline-block; margin-right: 20px;" class="display-4">
-                <h3 class="display-4" style="display: inline-block; vertical-align: middle; text-align: left; font-size: 3em;"><span style="color: red;">SAMURAI</span><br>Raid Scanner</h3>
-            <p class="lead">Found {{ data.targets|length }} potential raid targets</p>
+                <h3 class="display-4" style="display: inline-block; vertical-align: middle; text-align: left; font-size: 3em;"><span style="color: red;">SAMURAI</span><br>Beige Finder</h3>
+            <p class="lead">Found {{ data.targets|length }} beige nations</p> 
         </header>
 
         <div class="row mb-4">
             <div class="col-md-12">
                 <div class="card shadow">
-                    <div class="card-header bg-dark text-white">
+                    <div class="card-header bg-danger text-white">
                         <h3>Your Nation Summary</h3>
                     </div>
                     <div class="card-body">
@@ -48,19 +48,6 @@
                                 </div>
                                 {% endif %}
                             </div>
-                            <div class="col-md-4">
-                                <h5>Search Parameters</h5>
-                                <ul class="list-group">
-                                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        Inactive Time
-                                        <span class="badge bg-secondary rounded-pill">{{ data.params.inactive_time }}d</span>
-                                    </li>
-                                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        Troop Ratio
-                                        <span class="badge bg-secondary rounded-pill">{{ (data.params.troop_ratio * 100)|int }}%</span>
-                                    </li>
-                                </ul>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -70,17 +57,17 @@
         <div class="row mb-4">
             <div class="col-md-12">
                 <div class="card shadow">
-                    <div class="card-header bg-dark text-white">
+                    <div class="card-header bg-danger text-white"> 
                         <h3>Results Summary</h3>
                     </div>
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="alert alert-info">
-                                    <h5>Target Overview</h5>
+                                    <h5>Result Overview</h5>
                                     <ul class="list-group mt-2">
                                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            Total targets found
+                                            Total beiges found
                                             <span class="badge bg-primary rounded-pill">{{ data.targets|length }}</span>
                                         </li>
 
@@ -96,13 +83,13 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="card shadow">
-                    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-                        <h3>Raid Targets ({{ data.targets|length }})</h3>
+                    <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
+                        <h3>Beige Nations ({{ data.targets|length }})</h3>
                         <div>
-                            <a href="{{ url_for('index') }}" class="btn btn-outline-light btn-sm me-2">
+                            <a href="{{ url_for('beige_index') }}" class="btn btn-outline-light btn-sm me-2">
                                 <i data-feather="arrow-left"></i> Back
                             </a>
-                            <a href="{{ url_for('index') }}" class="btn btn-outline-light btn-sm">
+                            <a href="{{ url_for('beige_index') }}" class="btn btn-outline-light btn-sm">
                                 <i data-feather="refresh-cw"></i> New Search
                             </a>
                         </div>
@@ -114,12 +101,10 @@
                                     <tr>
                                         <th>#</th>
                                         <th>Nation</th>
-                                        <th>Score</th>
-                                        <th>Inactive</th>
-                                        <th>War Status</th>
-                                        <th>Last Alliance Bank Rec</th>
-                                        <th>Money Stolen (Recent Def War)</th>
-                                        <th>Actions</th>
+                                        <th>Score</th> {# Separated Score and Beige Turns #}
+                                        <th>Beige Turns</th> {# Separated Score and Beige Turns #}
+                                        <th>Military</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -128,35 +113,16 @@
                                         <td>{{ loop.index }}</td>
                                         <td>
                                             <strong>{{ target.name }}</strong><br>
-                                            <small class="text-muted">ID: {{ target.id }}</small><br>
-                                            <small class="badge {{ 'bg-secondary' if target.alliance == 'No Alliance' else 'bg-info' }}">{{ target.alliance }}</small>
+                                            <small class="badge {{ 'bg-secondary' if target.alliance == 'No Alliance' else 'bg-danger' }}">{{ target.alliance }}</small>
                                         </td>
-                                        <td>{{ target.score|round(2) }}</td>
-                                        <td>{{ target.inactive_days }}d</td>
+                                        <td>{{ target.score|round(2) }}</td> {# Display Score #}
+                                        <td>{{ target.beige_turns }}</td> {# Display Beige Turns #}
                                         <td>
-                                            {{ format_hours(target.hours_since_war) }} ago<br>
-                                            <span class="badge bg-success">No active defensive wars</span>
-                                        </td>
-                                        <td>
-                                            {% if target.last_alliance_bank_rec %}
-                                                {{ format_money(target.last_alliance_bank_rec.money) }} on {{ target.last_alliance_bank_rec.date }}
-                                            {% else %}
-                                                N/A
-                                            {% endif %}
-                                        </td>
-                                        <td>
-                                            {% if target.money_stolen_recent_def_war > 0 %}
-                                                {{ format_money(target.money_stolen_recent_def_war) }}
-                                            {% else %}
-                                                N/A
-                                            {% endif %}
+                                            💂{{ target.soldiers }}  🚜{{ target.tanks }} ✈️{{ target.aircraft }} 🚢{{ target.ships }} 🚀{{ target.missiles }} ☢️{{ target.nukes }} 🥷{{ target.spies }} {# Updated military units with emojis #}
                                         </td>
                                         <td>
                                             <a href="https://politicsandwar.com/nation/id={{ target.id }}" target="_blank" class="btn btn-primary btn-sm mb-1">
                                                 <i data-feather="external-link"></i> View
-                                            </a>
-                                            <a href="https://politicsandwar.com/nation/war/declare/id={{ target.id }}" target="_blank" class="btn btn-danger btn-sm">
-                                                <i data-feather="target"></i> Attack
                                             </a>
                                         </td>
                                     </tr>
@@ -170,8 +136,8 @@
         </div>
 
         <footer class="mt-5 text-center text-muted">
-            <p>Samurai Raid Scanner</p>
-            <p>For optimal raiding results and to avoid counters, respect DNR lists and alliance treaties</p>
+            <p>Samurai Beige Finder</p>
+            <p>Find beige nations with least beige turns.</p>
         </footer>
     </div>
 

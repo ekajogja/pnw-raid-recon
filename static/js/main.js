@@ -1,45 +1,17 @@
-
 document.addEventListener('DOMContentLoaded', function() {
-    const passwordGate = document.getElementById('password-gate');
-    const passwordInput = document.getElementById('password-input');
-    const passwordSubmit = document.getElementById('password-submit');
-    const passwordError = document.getElementById('password-error');
     const mainContent = document.getElementById('main-content');
     const apiKeyInput = document.getElementById('api-key-input');
     const scanForm = document.querySelector('form');
     const apiKeyHiddenInput = document.getElementById('api_key_hidden'); // Hidden input for API key
 
-    const correctPassword = "banzaishogun"; // The required password
-
-    // The password gate will always be shown on page load
-    passwordGate.style.display = 'flex'; // Use flex to center content
-    mainContent.style.display = 'none';
-    loadApiKey(); // Load API key even if password is not stored
-
-    // Password submit button event listener
-    if (passwordSubmit) {
-        passwordSubmit.addEventListener('click', function() {
-            if (passwordInput.value === correctPassword) {
-                passwordGate.style.display = 'none';
-                mainContent.style.display = 'block';
-                passwordError.style.display = 'none';
-                // Removed localStorage.setItem for password to prevent storing it
-                loadApiKey(); // Load API key after successful login
-            } else {
-                passwordError.style.display = 'block';
-            }
-        });
+    if (mainContent) { // Add null check for mainContent
+        // Display main content directly
+        mainContent.style.display = 'block';
+        loadApiKey(); // Load API key on page load
     }
 
-    // Allow submitting password with Enter key
-    if (passwordInput) {
-        passwordInput.addEventListener('keypress', function(event) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                passwordSubmit.click();
-            }
-        });
-    }
+
+
 
     // Load API key from local storage
     function loadApiKey() {
@@ -104,8 +76,8 @@ document.addEventListener('DOMContentLoaded', function() {
             if (advancedOptions) {
                 advancedOptions.classList.toggle('d-none');
                 const isVisible = !advancedOptions.classList.contains('d-none');
-                advancedToggle.innerHTML = isVisible ? 
-                    '<i data-feather="chevron-up"></i> Hide Advanced Options' : 
+                advancedToggle.innerHTML = isVisible ?
+                    '<i data-feather="chevron-up"></i> Hide Advanced Options' :
                     '<i data-feather="chevron-down"></i> Show Advanced Options';
                 feather.replace();
             }

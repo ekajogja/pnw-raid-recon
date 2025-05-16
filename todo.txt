@@ -1,0 +1,37 @@
+Samurai Raid Scanner - Beige Finder Implementation TODO
+
+Project Goal: This document outlines the steps to add a Beige Finder feature to the Samurai Raid Scanner project, allowing users to find nations that are currently beige and have 1 beige turn left, via both a web interface and a command-line tool.
+
+Completed Steps:
+- Created the files templates/beige.html, templates/beige-result.html, and beige.py.
+- Added navigation links between templates/index.html and templates/beige.html.
+- Made initial modifications to templates/beige-result.html (title, main heading, text updates, removed "Actions" column header, updated footer text). The "Attack" button was manually removed by the user.
+- Added the get_beige_nations function to pnw_api.py.
+- Replaced the original / and /scan routes in beige.py with the new /beige and /scan_beige routes (User manually completed).
+
+Remaining Steps:
+
+1.  Modify app.py:
+    Purpose: To integrate the beige finder web interface into the main Flask application.
+    Details:
+    - Add 'get_beige_nations' to the import statement from pnw_api at the top of the file.
+    - Copy the '/beige' and '/scan_beige' route definitions and their function bodies (currently in beige.py) and paste them into app.py, preferably after the existing '/api/scan' route.
+
+2.  Modify beige.py:
+    Purpose: To convert beige.py into a standalone command-line interface tool for finding beige nations.
+    Details:
+    - Remove all Flask web-related code from the file (the 'app = Flask(...)', 'app.secret_key = ...', and the '/beige', '/scan_beige', and '/api/scan' route definitions and their function bodies).
+    - Implement the command-line interface logic within the 'if __name__ == "__main__":' block. This will involve using the 'argparse' module (ensure 'argparse' is imported) to handle command-line arguments (like --api-key, --limit, --max-pages, --ignore-dnr, --min-infra, --max-infra, --inactive-time, --troop-ratio, --json) and adding the code to call the 'get_beige_nations' function with the parsed arguments and print the results to the console.
+
+3.  Modify templates/beige-result.html:
+    Purpose: To finalize the display of beige nation results on the web interface.
+    Details:
+    - Update the titles of the infrastructure and inactivity charts to be specific to "Beige Nation".
+    - Update the y-axis label for the inactivity chart to include "(Beige Turns)".
+
+Key Files for Understanding:
+- app.py: Main Flask web application entry point, handles web routes and calls backend logic.
+- raid.py: Existing command-line interface tool for raid scanning, useful as a reference for CLI structure.
+- pnw_api.py: Contains functions for interacting with the Politics & War API and filtering/processing data.
+- config.py: Stores configuration values and default parameters.
+- README.md: Provides a high-level overview, installation, and usage instructions.

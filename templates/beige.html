@@ -3,24 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Samurai Raid Scanner</title>
+    <title>Samurai Beige Finder</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
 </head>
 <body>
-
-
-    <div id="main-content" style="display: none;">
+    <div id="main-content">
         <div class="container">
             <header class="py-3 text-center">
                 <img src="{{ url_for('static', filename='assets/samurai-flag.png') }}" alt="Samurai Flag" style="height: 120px; vertical-align: middle; display: inline-block; margin-right: 20px;" class="display-4">
-                <h3 class="display-4" style="display: inline-block; vertical-align: middle; text-align: left; font-size: 3em;"><span style="color: red;">SAMURAI</span><br>Raid Scanner</h3>
+                <h3 class="display-4" style="display: inline-block; vertical-align: middle; text-align: left; font-size: 3em;"><span style="color: red;">SAMURAI</span><br>Beige Finder</h3>
             </header>
 
         <div class="row justify-content-center mb-3">
             <div class="col-md-8 text-center">
-                <a href="{{ url_for('beige_index') }}" class="btn btn-secondary">Find Beige Nations</a>
+                <a href="{{ url_for('index') }}" class="btn btn-secondary">Back to Raid Scanner</a>
             </div>
         </div>
 
@@ -28,7 +26,7 @@
             <div class="col-md-8">
                 <div class="card shadow">
                     <div class="card-header bg-danger text-white">
-                        <h3>Raid Target Parameters</h3>
+                        <h3>Beige Nation Parameters</h3>
                     </div>
                     <div class="card-body">
                         {% with messages = get_flashed_messages(with_categories=true) %}
@@ -47,29 +45,40 @@
                             <small class="form-text text-muted"><a href="https://politicsandwar.com/account/#7" target="_blank">Show my API key</a></small>
                         </div>
 
-                        <form action="{{ url_for('scan') }}" method="post">
+                        <form action="{{ url_for('scan_beige') }}" method="post">
                             <div class="row mb-3">
                                 <div class="col-md-6">
-                                    <label for="limit" class="form-label">Result Limit</label>
-                                    <div class="input-group">
-                                        <input type="number" class="form-control" id="limit" name="limit" value="10" min="1" max="50">
-                                        <span class="input-group-text"><i data-feather="list"></i></span>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="ignore_dnr" name="ignore_dnr" value="true">
+                                        <label class="form-check-label" for="ignore_dnr">Ignore Treaties (Show all nations)</label>
                                     </div>
-                                    <small class="text-muted">Max targets to return</small>
+                                    <small class="text-muted">Check to ignore alliance treaties and show all nations</small>
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="max_pages" class="form-label">Max Pages</label>
-                                    <div class="input-group">
-                                        <input type="number" class="form-control" id="max_pages" name="max_pages" value="10" min="1" max="50">
-                                        <span class="input-group-text"><i data-feather="file"></i></span>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="limit" class="form-label">Result Limit</label>
+                                            <div class="input-group">
+                                                <input type="number" class="form-control" id="limit" name="limit" value="10" min="1" max="50">
+                                                <span class="input-group-text"><i data-feather="list"></i></span>
+                                            </div>
+                                            <small class="text-muted">Max nations to return</small>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="max_pages" class="form-label">Max Pages</label>
+                                            <div class="input-group">
+                                                <input type="number" class="form-control" id="max_pages" name="max_pages" value="10" min="1" max="50">
+                                                <span class="input-group-text"><i data-feather="file"></i></span>
+                                            </div>
+                                            <small class="text-muted">API pages to scan</small>
+                                        </div>
                                     </div>
-                                    <small class="text-muted">API pages to scan</small>
                                 </div>
                             </div>
 
                             <div class="d-grid gap-2">
                                 <button type="submit" class="btn btn-danger" id="scan-btn">
-                                    <i data-feather="search"></i> Scan for Targets
+                                    <i data-feather="search"></i> FIND BEIGES
                                 </button>
                             </div>
                             <input type="hidden" id="api_key_hidden" name="api_key">
@@ -78,7 +87,7 @@
                     <div class="card-footer text-muted">
                         <div class="row">
                             <div class="col-md-12 text-center">
-                                <small>This tool helps find inactive nations for raiding. Always respect alliance treaties and game rules.</small>
+                                <small>This tool helps find nations that are currently beige and have more than 3 beige turns left.</small>
                             </div>
                         </div>
                     </div>
@@ -87,8 +96,8 @@
         </div>
 
         <footer class="mt-5 text-center text-muted">
-            <p>Samurai Raid Scanner</p>
-            <p>For optimal raiding results and to avoid counters, respect DNR lists and alliance treaties</p>
+            <p>Samurai Beige Finder</p>
+            <p>Find nations that are currently beige and have least beige turns left.</p>
         </footer>
     </div>
     </div>
