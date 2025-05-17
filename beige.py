@@ -118,7 +118,7 @@ def main():
         # Print usage tips
         print("\nBeige Finder Options:")
         # print(format_param_info("--api-key API_KEY", "Your Politics & War API key")) # Removed --api-key tip
-        print(format_param_info("--ignore-dnr", "Show nations in alliances (respects treaties)", f"current: {args.ignore_dnr}"))
+        print(format_param_info("--ignore-dnr", "ignore your alliance treaties", f"current: {args.ignore_dnr}"))
         # print(format_param_info("--json", "Output results in JSON format")) # Removed --json tip
         print(format_param_info("--limit N", "Limit number of results", f"current: {args.limit}"))
         print(format_param_info("--max-pages N", "Maximum number of pages to fetch", f"current: {args.max_pages}"))
